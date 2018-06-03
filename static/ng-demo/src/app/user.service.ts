@@ -30,31 +30,11 @@ export class UserService {
     this.http.post('/api-token-auth/', JSON.stringify(user), this.httpOptions).subscribe(
       data => {
         console.log('login success', data);
-        this.token = data['token'];
-        this.errors = [];
-
-        const token_parts = this.token.split(/\./);
-        const token_decoded = JSON.parse(window.atob(token_parts[1]));
-        this.token_expires = new Date(token_decoded.exp * 1000);
-
-        this.username = token_decoded.username;
-
+        this.updateData(data['token']);
       },
       err => {
         console.error('login error', err);
-        this.errors = [];
-        if (typeof(err['error']['non_field_errors'] !== undefined)) {
-          console.log(err['error']['non_field_errors']);
-          this.errors.concat(err['error']['non_field_errors']);
-        }
-        if (typeof(err['error']['username'] !== undefined)) {
-          console.log(err['error']['username']);
-          this.errors.concat(err['error']['username']);
-        }
-        if (typeof(err['error']['password'] !== undefined)) {
-          console.log(err['error']['password']);
-          this.errors.concat(err['error']['password']);
-        }
+        this.errors = err['error'];
       }
     );
   }
@@ -66,31 +46,11 @@ export class UserService {
     this.http.post('/api-token-refresh/', JSON.stringify({token: this.token}), this.httpOptions).subscribe(
       data => {
         console.log('refresh success', data);
-        this.token = data['token'];
-        this.errors = [];
-
-        const token_parts = this.token.split(/\./);
-        const token_decoded = JSON.parse(window.atob(token_parts[1]));
-        this.token_expires = new Date(token_decoded.exp * 1000);
-
-        this.username = token_decoded.username;
-
+        this.updateData(data['token']);
       },
       err => {
         console.error('refresh error', err);
-        this.errors = [];
-        if (typeof(err['error']['non_field_errors'] !== undefined)) {
-          console.log(err['error']['non_field_errors']);
-          this.errors.concat(err['error']['non_field_errors']);
-        }
-        if (typeof(err['error']['username'] !== undefined)) {
-          console.log(err['error']['username']);
-          this.errors.concat(err['error']['username']);
-        }
-        if (typeof(err['error']['password'] !== undefined)) {
-          console.log(err['error']['password']);
-          this.errors.concat(err['error']['password']);
-        }
+        this.errors = err['error'];
       }
     );
   }
@@ -99,6 +59,17 @@ export class UserService {
     this.token = null;
     this.token_expires = null;
     this.username = null;
+  }
+
+  private updateData(token) {
+    this.token = token;
+    this.errors = [];
+
+    // decode the token to read the username and expiration timestamp
+    const token_parts = this.token.split(/\./);
+    const token_decoded = JSON.parse(window.atob(token_parts[1]));
+    this.token_expires = new Date(token_decoded.exp * 1000);
+    this.username = token_decoded.username;
   }
 
 }
