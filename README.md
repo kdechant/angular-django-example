@@ -27,7 +27,7 @@ Open a terminal at the repo root, and run the following:
 ```bash
 pipenv install
 pipenv shell
-cd static/ng-demo
+cd microblog/front-end
 npm install
 ng build
 cd ../..
