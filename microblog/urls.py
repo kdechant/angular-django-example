@@ -1,4 +1,4 @@
-from django.conf.urls import url, include
+from django.urls import path, include
 from rest_framework import routers
 
 from . import views
@@ -8,6 +8,6 @@ router.register(r'posts', views.BlogPostViewSet)
 router.register(r'users', views.UserViewSet)
 
 urlpatterns = [
-    url(r'^api/', include(router.urls)),
-    url(r'^$', views.index, name='index')
+    path(r'api/', include(router.urls)),
+    path(r'', views.index, name='index')
 ]
